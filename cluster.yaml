@@ -1,0 +1,7 @@
+make_intervals:
+    job_name: "efficient_DV_ultimaG_make_intervals"
+    output: "efficient_DV_ultimaG_make_intervals.txt"
+
+make_examples:
+    job_name: "efficient_DV_ultimaG_make_examples"
+    output: "efficient_DV_ultimaG_make_examples.txt"

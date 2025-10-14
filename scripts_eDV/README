@@ -1,0 +1,22 @@
+
+# Instructions for germline variant calling using DeepVariant for Ultima Genomics data
+## adapted from :  https://github.com/Ultimagen/healthomics-workflows/blob/main/workflows/efficient_dv/howto-germline-calling-efficient-dv.md
+
+# get the reference files and germline specific DeepVariant model and the cram file with its index file 
+sbatch get_test_data.sh
+
+# pull the make_examples and call_variants sif (docker) files with apptainer 
+sbatch efficientDV.get_docker_images.sh
+
+# make intervals and output them to the 'out' directory
+# change interval_list files into bed files and output to bedfiles directory
+# run make_examples.sif docker image with apptainer on each bedfile to identify potential variants (examples for the machine learning model to classify as a variant or not). The output is .bed.out.tfrecord.gz files in the 'out' file
+sbatch efficientDV.make_examples.sh
+
+# Next, the call_variants sif file is run to identify variants within the tfrecords using machine learning. This step requires 1 GPU (available on narval). The parameters, and tfrecord files  are specified in the call_variants.ini file 
+sbatch efficientDV.call_variants.sh
+
+# Finally, the post_processing sif is run to generate the final vcf file
+
+sbatch efficientDV.post_processing.sh
+

@@ -1,0 +1,20 @@
+# data
+test_data/
+# intermidiate files
+bedfiles/
+call_variants_output/
+comparison.out/
+example_files/
+interval_list_out/
+out/
+# output files
+output_compare_outfiles/
+postprocess_output/
+# logs
+.snakemake/
+efficient_DV_ultimaG_make_examples.txt
+efficient_DV_ultimaG_make_intervals.txt
+#docker images
+*.sif
+# java binaries
+*.jar
