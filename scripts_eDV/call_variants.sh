@@ -10,7 +10,7 @@
 
 cd $SCRATCH
 
-module load apptainer/1.2.4
+module load apptainer/1.3.5
 
 mkdir -p call_variants_output
 

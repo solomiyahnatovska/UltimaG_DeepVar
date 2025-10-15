@@ -3,14 +3,12 @@
 
 rule all:
     input:
-        "/home/hnatovs1/scratch/call_variants_output"
+        "/home/hnatovs1/scratch/postprocess_output"
 rule make_intervals:
     input:
         interval_list='/scratch/hnatovs1/test_data/wgs_calling_regions.hg38.interval_list'
     output:
         beddir=directory("/home/hnatovs1/scratch/bedfiles")
-    params:
-        slurm_extra="--mail-type=FAIL"
     log:
         "logs/efficient_DV_ultimaG_make_intervals.txt"
     shell:
@@ -22,9 +20,6 @@ rule make_examples:
         cram_index='/home/hnatovs1/scratch/test_data/sample.chr1.5M.cram.crai'
     output:
         examplesdir=directory('/home/hnatovs1/scratch/example_files')
-
-    params:
-        slurm_extra="--mail-type=FAIL"
     log:
         "logs/efficient_DV_ultimaG_make_examples.txt"
     shell:
@@ -76,12 +71,20 @@ rule call_variants:
         examplesdir=rules.make_examples.output.examplesdir,
         config=rules.generate_config.output.config
     output:
-        directory("/home/hnatovs1/scratch/call_variants_output")
-    params:
-        slurm_extra="--gpus=a100_4g.20gb:1 --mail-type=FAIL"
+        call_vars_outdir=directory("/home/hnatovs1/scratch/call_variants_output")
     log:
         "logs/efficient_DV_ultimaG_call_variants.txt" 
     shell:
         "/home/hnatovs1/scratch/scripts_eDV/call_variants.sh &> {log}"
 
+rule post_process:
+    input:
+        call_vars_outdir=rules.call_variants.output.call_vars_outdir
+    output:
+        postprocess_output=directory('/home/hnatovs1/scratch/postprocess_output')
+    log:
+        "logs/efficient_DV_ultimaG_post_process.txt" 
+    shell:
+        "/home/hnatovs1/scratch/scripts_eDV/post_process.sh &> {log}"
+            
 # snakemake --cluster "sbatch -J {cluster.job_name} -o {cluster.output} -N {cluster.nodes} -n {cluster.ntasks} -t {cluster.time_min} --mem={cluster.mem_mb} --gpus={cluster.gpus}" --cluster-config /home/hnatovs1/scratch/cluster.yaml --jobs 3

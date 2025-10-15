@@ -32,3 +32,10 @@ call_variants:
     time_min: 60
     cpus: 2
     gpus: "a100_4g.20gb:1"
+
+post_process:
+    job_name: "efficient_DV_ultimaG_post_process"
+    output: "/home/hnatovs1/scratch/logs/Slurmlog_efficient_DV_ultimaG_post_process.txt"
+    mem_mb: 8000
+    time_min: 60
+    cpus: 1    
