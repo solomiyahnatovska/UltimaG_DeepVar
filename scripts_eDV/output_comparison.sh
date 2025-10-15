@@ -3,7 +3,7 @@
 #SBATCH --ntasks=40
 #SBATCH --time=0-01:00
 #SBATCH --job-name efficient_DV_UG_compare
-#SBATCH --output=efficient_DV_UG_compare.txt
+#SBATCH --output=/home/hnatovs1/scratch/logs/efficient_DV_UG_compare.txt
 #SBATCH --mail-type=FAIL
 
 

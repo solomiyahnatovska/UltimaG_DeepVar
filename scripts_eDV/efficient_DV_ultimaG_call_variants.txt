@@ -1,6 +1,0 @@
-ug_postproc.cc:192 INFO UG PostProc: version 0.2.1
-bgzip (htslib) 1.13+ds
-Copyright (C) 2021 Genome Research Ltd.
-cmd: bgzip -i -I /home/hnatovs1/scratch/postprocess_output/postprocess_output.vcf.gz.gzi >/home/hnatovs1/scratch/postprocess_output/postprocess_output.vcf.gz
-reading: /home/hnatovs1/scratch/call_variants_output/call_variants.1.gz
-postproc.cc:319 INFO monitor - count: 324 total: 17 ms per 1000 records: 52.4691 ms (52.4691 ms)
