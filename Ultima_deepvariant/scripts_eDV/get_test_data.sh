@@ -41,3 +41,9 @@ module load awscli/2.13.19
 wget https://github.com/Ultimagen/healthomics-workflows/raw/refs/heads/main/tests/efficient_dv/test_outputs/sample.vcf.gz
 
 wget https://github.com/Ultimagen/healthomics-workflows/raw/refs/heads/main/tests/efficient_dv/test_outputs/sample.vcf.gz.tbi
+
+# The following are 10 cram GIAB data sets and their respective vcr's (using adapted DeepVariant pipeline)
+# So it's another good test data set
+# https://cdn.sanity.io/files/l7780ks7/production-2024/0a1b6a62a6da3e3fcafb81cad4c8ff2ffe85dd41.pdf
+\aws s3 sync s3://ultima-public-data/WGS/agbt_2025_reference_set/GIAB ultima-GIAB/ --no-sign-request
+\aws s3 sync s3://ultima-public-data/WGS/agbt_2025_reference_set/GIAB/DeepVariant_vcfs/… --nosign-request

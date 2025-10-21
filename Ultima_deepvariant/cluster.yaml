@@ -1,6 +1,7 @@
+
 __default__:
     job_name: "snakemake"
-    output: "logs/snakemake-%j.out"
+    output: "/home/hnatovs1/scratch/Ultima_deepvariant/slurmlogs/snakemake-%j.out"
     nodes: 1
     ntasks: 1
     time_min: 60
@@ -9,25 +10,25 @@ __default__:
 
 make_intervals:
     job_name: "efficient_DV_ultimaG_make_intervals"
-    output: "/home/hnatovs1/scratch/logs/Slurmlog_efficient_DV_ultimaG_make_intervals.txt"
+    output: "/home/hnatovs1/scratch/Ultima_deepvariant/slurmlogs/Slurmlog_efficient_DV_ultimaG_make_intervals.txt"
     nodes: 1
     ntasks: 40
     time_min: 60
 
 make_examples:
     job_name: "efficient_DV_ultimaG_make_examples"
-    output: "/home/hnatovs1/scratch/logs/Slurmlog_efficient_DV_ultimaG_make_examples.txt"
+    output: "/home/hnatovs1/scratch/Ultima_deepvariant/slurmlogs/Slurmlog_efficient_DV_ultimaG_make_examples.txt"
     nodes: 1
     ntasks: 40
-    time_min: 60
+    time_min: 1200
 
 generate_config:
     job_name: "efficient_DV_ultimaG_generate_config"
-    output: "/home/hnatovs1/scratch/logs/Slurmlog_efficient_DV_ultimaG_generate_config.txt"
+    output: "/home/hnatovs1/scratch/Ultima_deepvariant/slurmlogs/Slurmlog_efficient_DV_ultimaG_generate_config.txt"
 
 call_variants:
     job_name: "efficient_DV_ultimaG_call_variants"
-    output: "/home/hnatovs1/scratch/logs/Slurmlog_efficient_DV_ultimaG_call_variants.txt"
+    output: "/home/hnatovs1/scratch/Ultima_deepvariant/slurmlogs/Slurmlog_efficient_DV_ultimaG_call_variants.txt"
     mem_mb: 10000
     time_min: 60
     cpus: 2
@@ -35,7 +36,7 @@ call_variants:
 
 post_process:
     job_name: "efficient_DV_ultimaG_post_process"
-    output: "/home/hnatovs1/scratch/logs/Slurmlog_efficient_DV_ultimaG_post_process.txt"
+    output: "/home/hnatovs1/scratch/Ultima_deepvariant/slurmlogs/Slurmlog_efficient_DV_ultimaG_post_process.txt"
     mem_mb: 8000
     time_min: 60
     cpus: 1    
