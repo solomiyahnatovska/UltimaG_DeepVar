@@ -11,7 +11,7 @@ config_dir = project_dir.joinpath("configs")
 
 rule all: 
     input:
-        project_dir.joinpath("postprocess_output")
+        project_dir.joinpath("postprocess_output/postprocess_output.vcf.gz")
 rule make_intervals: # This rule runs the make intervals script which only needs to be run once for the reference version (hg38 in this case) -not a sample specific step
     input:
         interval_list=data_dir.joinpath('wgs_calling_regions.hg38.interval_list')
@@ -27,20 +27,18 @@ rule make_intervals: # This rule runs the make intervals script which only needs
 rule make_examples: # This rule encorporates the sample cram and index files and uses each the 40 interval bedfiles to identify potential variants
     input:
         interval_beds=rules.make_intervals.output.interval_beds,
-        cram_file=data_dir.joinpath("ultima-GIAB/Crams/414004-L7384-Z0008-CACATCCTGCATGTGAT.cram"),
-        cram_index=data_dir.joinpath("ultima-GIAB/Crams/414004-L7384-Z0008-CACATCCTGCATGTGAT.cram.crai")
-#        cram_file='/home/hnatovs1/scratch/test_data/sample.chr1.5M.cram',
-#        cram_index='/home/hnatovs1/scratch/test_data/sample.chr1.5M.cram.crai'
+        cram_file='/home/hnatovs1/scratch/Ultima_deepvariant/test_data/ultima-GIAB/Crams/414004-L7384-Z0008-CACATCCTGCATGTGAT.cram',
+        cram_index='/home/hnatovs1/scratch/Ultima_deepvariant/test_data/ultima-GIAB/Crams/414004-L7384-Z0008-CACATCCTGCATGTGAT.cram.crai'
     output:
-        example_beds=expand(str(intermediate_data_dir.joinpath("bedfiles/temp_{i:04d}_of_40.bed.out.tfrecord.gz")), i=range(1,41))
+        example_beds=expand(str(intermediate_data_dir.joinpath("examplesdir/temp_{i:04d}_of_40.bed.out.tfrecord.gz")), i=range(1,41))
     log:
         log_dir.joinpath("efficient_DV_ultimaG_make_examples.txt")
     params:
         script=scripts_dir.joinpath("make_examples.sh"),
-        outdir=intermediate_data_dir.joinpath("example_files")
+        outdir=intermediate_data_dir.joinpath("examplesdir")
     shell:
        "{params.script} -c {input.cram_file} -d {input.cram_index} -i {input.interval_beds} -o {params.outdir} &> {log}"
-rule generate_config: # Generates the configuration file, incorporating all the examples generated across all the bedfiles
+rule generate_config: # Generates the configuration file for the call_variants rule, incorporating all the examples generated across all the bedfiles
     input:
         example_beds=rules.make_examples.output.example_beds
     output:
@@ -87,24 +85,24 @@ rule call_variants:
         example_beds=rules.make_examples.output.example_beds,
         config=rules.generate_config.output.config
     output:
-        call_vars_outdir=intermediate_data_dir.joinpath("call_variants_output")
+        call_vars_outfile=intermediate_data_dir.joinpath("call_variants_output/call_variants.1.gz")
     params:
         script=scripts_dir.joinpath("call_variants.sh")
     log:
         log_dir.joinpath("efficient_DV_ultimaG_call_variants.txt")
     shell:
-       "params.script &> {log}"
+       "{params.script} &> {log}"
 
 rule post_process:
     input:
-        call_vars_outdir=rules.call_variants.output.call_vars_outdir
+        call_vars_outfile=rules.call_variants.output.call_vars_outfile
     output:
-        postprocess_output=project_dir.joinpath("postprocess_output")
+        postprocess_output=project_dir.joinpath("postprocess_output/postprocess_output.vcf.gz")
     params:
         script=scripts_dir.joinpath("post_process.sh")
     log:
         log_dir.joinpath("efficient_DV_ultimaG_post_process.txt")
     shell:
-        "params.script &> {log}"
+        "{params.script} &> {log}"
             
-# 
+# For Snakemake version 5.9.1

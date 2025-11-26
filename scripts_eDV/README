@@ -20,3 +20,5 @@ sbatch efficientDV.call_variants.sh
 
 sbatch efficientDV.post_processing.sh
 
+#        cram_file='/home/hnatovs1/scratch/Ultima_deepvariant/test_data/sample.chr1.5M.cram',
+#        cram_index='/home/hnatovs1/scratch/Ultima_deepvariant/test_data/sample.chr1.5M.cram.crai'

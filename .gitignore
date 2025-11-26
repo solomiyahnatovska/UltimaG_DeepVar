@@ -9,12 +9,17 @@ interval_list_out/
 configs/
 
 # output files
+intermediate_outputs/
 output_compare_outfiles/
 postprocess_output/
 # logs
 .snakemake/
 logs/
+slurmlogs/
+snakemake_controller*
+
 #docker images
 *.sif
 # java binaries
 *.jar
+

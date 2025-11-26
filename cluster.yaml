@@ -20,7 +20,7 @@ make_examples:
     output: "/home/hnatovs1/scratch/Ultima_deepvariant/slurmlogs/Slurmlog_efficient_DV_ultimaG_make_examples.txt"
     nodes: 1
     ntasks: 40
-    time_min: 1200
+    time_min: 120
 
 generate_config:
     job_name: "efficient_DV_ultimaG_generate_config"
@@ -31,12 +31,14 @@ call_variants:
     output: "/home/hnatovs1/scratch/Ultima_deepvariant/slurmlogs/Slurmlog_efficient_DV_ultimaG_call_variants.txt"
     mem_mb: 10000
     time_min: 60
-    cpus: 2
+    ntasks: 1    
+    cpus_per_task: 2
     gpus: "a100_4g.20gb:1"
 
 post_process:
     job_name: "efficient_DV_ultimaG_post_process"
     output: "/home/hnatovs1/scratch/Ultima_deepvariant/slurmlogs/Slurmlog_efficient_DV_ultimaG_post_process.txt"
+    nodes: 1
+    ntasks: 1        # Change from cpus to ntasks
     mem_mb: 8000
     time_min: 60
-    cpus: 1    

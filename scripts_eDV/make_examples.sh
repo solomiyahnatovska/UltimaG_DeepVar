@@ -17,22 +17,23 @@ while getopts ":i:c:d:o:" flag; do
  esac
 done
 
-cd $SCRATCH
+
 module load StdEnv/2023
 module load apptainer/1.3.5
 
-mkdir -p $examplesdir
+mkdir -p intermediate_outputs/examplesdir
 
 
 for bedfile in $interval_beds ; do
 	{
+		bedfile_basename=$(basename "$bedfile")
 		echo "Processing $bedfile..."
-		apptainer run -e -B $SCRATCH -W $SCRATCH $SCRATCH/docker_images_eDV/deepvariant_make_examples.sif tool \
+		apptainer run -e -B $SCRATCH -W $SCRATCH docker_images_eDV/deepvariant_make_examples.sif tool \
 		  --input $cram_file \
 		  --cram-index $cram_index \
 		  --bed $bedfile \
-		  --output $examplesdir/$example_files.out \
-		  --reference /home/hnatovs1/scratch/test_data/Homo_sapiens_assembly38.fasta \
+		  --output intermediate_outputs/examplesdir/$bedfile_basename.out \
+		  --reference test_data/Homo_sapiens_assembly38.fasta \
 		  --min-base-quality 5 \
 		  --min-mapq 5 \
 		  --cgp-min-count-snps 2 \
