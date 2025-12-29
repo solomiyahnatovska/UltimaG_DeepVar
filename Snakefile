@@ -13,18 +13,17 @@ config_dir = project_dir.joinpath("configs")
 # specify here a list of sample names
 SAMPLES = ["414004-L7384-Z0008-CACATCCTGCATGTGAT", "414004-L7386-Z0114-CAACATACATCAGAT", "414004-L7388-Z0016-CATCCTGTGCGCATGAT", "414004-L7390-Z0117-CTGCCGAGCAGCATGAT", "414004-L7392-Z0032-CTCTGTATTGCAGAT"]  
 
-# Define the shard IDs so that the make examples step is run for each one that is missing
+# Defining the shard IDs so that the make examples step is run for each one that is missing
 SHARDS = [f"{i:04d}" for i in range(1, 41)]
 
-rule all: 
+rule all:
     input:
-        expand(f"{project_dir}/postprocess_output/postprocess_output_{{sample}}.vcf.gz", sample=SAMPLES)
-
+        expand(str(project_dir / "postprocess_output" / "postprocess_output_{sample}.vcf.gz"), sample=SAMPLES)
 rule make_intervals: # This rule runs the make intervals script which only needs to be run once for the reference version (hg38 in this case) -not a sample specific step
     input:
         interval_list=data_dir.joinpath('wgs_calling_regions.hg38.interval_list')
     output:
-        interval_beds=expand(str(intermediate_data_dir.joinpath("bedfiles/temp_{i:04d}_of_40.bed")), i=range(1,41))
+        interval_beds=expand(str(intermediate_data_dir / "bedfiles/temp_{shard}_of_40.bed"), shard=SHARDS)
     params:
         script=scripts_dir.joinpath("make_intervals.sh"),
         outdir=intermediate_data_dir.joinpath("bedfiles")
@@ -38,7 +37,7 @@ rule make_examples_single:
         cram_file=cram_dir.joinpath("{sample}.cram"),
         cram_index=cram_dir.joinpath("{sample}.cram.crai"),
     output:
-        example_bed=str(intermediate_data_dir.joinpath("examplesdir/{sample}/temp_{shard}_of_40.bed.out.tfrecord.gz"))
+        example_bed=str(intermediate_data_dir / "examplesdir/{sample}/temp_{shard}_of_40.bed.out.tfrecord.gz")
     log:
         str(log_dir.joinpath("{sample}/efficient_DV_ultimaG_make_examples_{shard}.txt"))
     params:
@@ -53,13 +52,13 @@ rule make_examples_single:
         """
 rule generate_config:
     input:
-        example_beds=expand(str(intermediate_data_dir.joinpath("examplesdir/{{sample}}/temp_{shard}_of_40.bed.out.tfrecord.gz")), shard=SHARDS)
+        example_beds=expand(str(intermediate_data_dir / "examplesdir/{{sample}}/temp_{shard}_of_40.bed.out.tfrecord.gz"), shard=SHARDS)
     output:
-        config=config_dir.joinpath("{sample}/call_variants.ini")
+        config=str(config_dir.joinpath("{sample}/call_variants.ini")) # making it into a string ensures that snakemake replaces {sample} with the actual sample names
     params:
-        outputFileName=intermediate_data_dir.joinpath("call_variants_output/{sample}/call_variants"),
-        sample_call_log_dir=intermediate_data_dir.joinpath("call_variants_output/{sample}"),
-        sample_config_dir=config_dir.joinpath("{sample}")
+        outputFileName=str(intermediate_data_dir.joinpath("call_variants_output/{sample}/call_variants")),
+        sample_call_log_dir=str(intermediate_data_dir.joinpath("call_variants_output/{sample}")),
+        sample_config_dir=str(config_dir.joinpath("{sample}"))
 
     shell:
         """
@@ -98,10 +97,10 @@ EOF
 
 rule call_variants:
     input:
-        example_beds=expand(str(intermediate_data_dir.joinpath("examplesdir/{{sample}}/temp_{i:04d}_of_40.bed.out.tfrecord.gz")), i=range(1,41)),
+        example_beds=expand(str(intermediate_data_dir / "examplesdir/{{sample}}/temp_{shard}_of_40.bed.out.tfrecord.gz"), shard=SHARDS),
         config=rules.generate_config.output.config
     output:
-        call_vars_outfile=expand(str(intermediate_data_dir.joinpath("call_variants_output/{{sample}}/call_variants.{i}.gz")), i=range(1,41))
+        call_vars_outfile=expand(str(intermediate_data_dir / "call_variants_output/{{sample}}/call_variants.{i}.gz"), i=range(1,41))
     params:
         script=scripts_dir.joinpath("call_variants.sh"),
         call_variants_dir=str(intermediate_data_dir.joinpath("call_variants_output/{sample}"))
@@ -113,10 +112,10 @@ rule call_variants:
        {params.script} -c {input.config} &> {log}
        '''
 
-
+# Expanding on both shards and samples in the input because rule all doesnt assign variables
 rule post_process:
     input:
-        call_vars_outfile=rules.call_variants.output.call_vars_outfile
+        call_vars_outfile = expand(str(intermediate_data_dir / "call_variants_output/{{sample}}/call_variants.{i}.gz"), i=range(1, 41))
     output:
         postprocess_output=project_dir.joinpath("postprocess_output/postprocess_output_{sample}.vcf.gz")
     params:
@@ -124,6 +123,6 @@ rule post_process:
     log:
         str(log_dir.joinpath("{sample}/efficient_DV_ultimaG_post_process.txt"))
     shell:
-        "{params.script} -i '{input.call_vars_outfile}' &> {log}"
+        "{params.script} -i '{input.call_vars_outfile}' -o {output.postprocess_output} &> {log}"
 
 # For Snakemake version 5.9.1

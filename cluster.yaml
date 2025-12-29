@@ -20,7 +20,7 @@ make_examples_single:
     output: "/home/hnatovs1/scratch/Ultima_deepvariant/slurmlogs/Slurmlog_efficient_DV_ultimaG_make_examples.txt"
     nodes: 1
     ntasks: 1
-    time_min: 240
+    time_min: 180
 
 generate_config:
     job_name: "efficient_DV_ultimaG_generate_config"
