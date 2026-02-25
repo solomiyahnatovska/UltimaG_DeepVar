@@ -18,7 +18,7 @@ SHARDS = [f"{i:04d}" for i in range(1, 41)]
 
 rule all:
     input:
-        expand(str(project_dir / "postprocess_output" / "postprocess_output_{sample}.vcf.gz"), sample=SAMPLES)
+        expand(str(project_dir / "postprocess_output" / "postprocess_output_{sample}_model_1.9.vcf.gz"), sample=SAMPLES)
 rule make_intervals: # This rule runs the make intervals script which only needs to be run once for the reference version (hg38 in this case) -not a sample specific step
     input:
         interval_list=data_dir.joinpath('wgs_calling_regions.hg38.interval_list')
@@ -59,7 +59,7 @@ rule generate_config:
         outputFileName=str(intermediate_data_dir.joinpath("call_variants_output/{sample}/call_variants")),
         sample_call_log_dir=str(intermediate_data_dir.joinpath("call_variants_output/{sample}")),
         sample_config_dir=str(config_dir.joinpath("{sample}"))
-
+# try changing the model to ultima-usb4-amp_pcrfree-germline-model-v1.9.ckpt-420000.batch1500.onnx (from the model in the Walkthrough: ultima-usb4-pe-germline-model-v1.5.ckpt-380000.onnx)
     shell:
         """
         mkdir -p {params.sample_config_dir}
@@ -70,7 +70,7 @@ rule generate_config:
         
         cat > {output.config} <<EOF
 [RT classification]
-onnxFileName = /scratch/hnatovs1/Ultima_deepvariant/test_data/ultima-usb4-pe-germline-model-v1.5.ckpt-380000.onnx
+onnxFileName = /scratch/hnatovs1/Ultima_deepvariant/test_data/ultima-usb4-amp_pcrfree-germline-model-v1.9.ckpt-420000.batch1500.onnx
 useSerializedModel = 1
 trtWorkspaceSizeMB = 2000
 numInferTreadsPerGpu = 2
@@ -117,7 +117,7 @@ rule post_process:
     input:
         call_vars_outfile = expand(str(intermediate_data_dir / "call_variants_output/{{sample}}/call_variants.{i}.gz"), i=range(1, 41))
     output:
-        postprocess_output=project_dir.joinpath("postprocess_output/postprocess_output_{sample}.vcf.gz")
+        postprocess_output=project_dir.joinpath("postprocess_output/postprocess_output_{sample}_model_1.9.vcf.gz")
     params:
         script=str(scripts_dir.joinpath("post_process.sh"))
     log:

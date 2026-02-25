@@ -27,6 +27,8 @@ module load awscli/2.13.19
 
 #this was the referenced file in the the actual init file under Running call_variants:
 #aws s3 cp s3://ultimagen-workflow-resources-us-east-1/deepvariant/model/germline/v1.5/ultima-usb4-pe-germline-model-v1.5.ckpt-380000.onnx ./ --no-sign-request
+# Will try the new model (found in the WDL input template JSON file)
+aws s3 cp s3://ultimagen-workflow-resources-us-east-1/deepvariant/model/germline/wgs/v1.9/ultima-usb4-amp_pcrfree-germline-model-v1.9.ckpt-420000.batch1500.onnx ./ --no-sign-request
 
 #apptainer exec docker://google/cloud-sdk:latest \
 #    gsutil cp gs://concordanz/deepvariant/model/germline/v1.3/model.ckpt-890000.dyn_1500.onnx ./
