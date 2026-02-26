@@ -17,7 +17,7 @@ SAMPLES=("414004-L7384-Z0008-CACATCCTGCATGTGAT" "414004-L7388-Z0016-CATCCTGTGCGC
 # Loop through array with ${SAMPLES[@]}
 for i in "${SAMPLES[@]}"; do
     echo "Processing sample: ${i}"
-    bcftools view -i 'GT!="0/0" && GT!="0|0"' -v snps,indels $VCF_PATH/postprocess_output_${i}_model_1.9.vcf.gz | bcftools sort $VCF_PATH/no_refcalls/${i}.nonref.unsorted.vcf.gz -Oz -o $VCF_PATH/no_refcalls/${i}.nonref.vcf.gz
+    bcftools view -i 'GT!="0/0" && GT!="0|0"' -v snps,indels $VCF_PATH/postprocess_output_${i}_model_1.9.vcf.gz | bcftools sort -Oz -o $VCF_PATH/no_refcalls/${i}.nonref.vcf.gz
 
     # Index the sorted file
     bcftools index -t -f $VCF_PATH/no_refcalls/${i}.nonref.vcf.gz
